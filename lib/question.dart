@@ -1,10 +1,8 @@
 class Question{
-  int index;
   String question;
   bool answer;
 
-  Question(int index, String question, bool answer){
-    this.index = index;
+  Question(String question, bool answer){
     this.question = question;
     this.answer = answer;
   }
