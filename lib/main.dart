@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quizzler/quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void main() => runApp(Quizzler());
 
@@ -28,6 +29,30 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  // Alert with single button.
+  _onAlertButtonPressed(context) {
+    Alert(
+      context: context,
+      type: AlertType.success,
+      title: "END OF THE ROAD",
+      desc: "You've answered all Questions.",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            setState(() {
+              quizBrain.resetQuizz();
+              Navigator.pop(context);
+            });
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +66,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                quizBrain.questions[quizBrain.questionIndex].question,
+                quizBrain.getQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -67,6 +92,9 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 setState(() {
                   quizBrain.answerQuestion(true);
+                  if (!quizBrain.nextQuestion()) {
+                    _onAlertButtonPressed(context);
+                  }
                 });
               },
             ),
@@ -87,13 +115,15 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 setState(() {
                   quizBrain.answerQuestion(false);
+                  if (!quizBrain.nextQuestion()) {
+                    _onAlertButtonPressed(context);
+                  }
                 });
               },
             ),
           ),
         ),
-        Row(children: quizBrain.answersIcons
-        ),
+        Row(children: quizBrain.answersIcons),
       ],
     );
   }
